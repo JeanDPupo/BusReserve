@@ -20,10 +20,10 @@ public class Incident {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String entityType; // TRIP, TICKET, PARCEL
+    private EntityType entityType; // TRIP, TICKET, PARCEL
     private Long entityId;
 
-    private String type; // SECURITY, DELIVERY_FAIL, OVERBOOK, VEHICLE
+    private IncidentType type; // SECURITY, DELIVERY_FAIL, OVERBOOK, VEHICLE
     private String note;
 
     private LocalDateTime createdAt;
