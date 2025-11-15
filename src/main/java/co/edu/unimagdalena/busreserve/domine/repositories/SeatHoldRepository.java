@@ -15,7 +15,7 @@ public interface SeatHoldRepository extends JpaRepository<SeatHold,Long> {
     List<SeatHold> findByTripIdAndSeatNumberAndStatus(Long tripId, String seatNumber, HoldStatus status);
 
     @Query("""
-        SELECT sh FROM SeatHold sh 
+        SELECT sh FROM SeatHold sh
         WHERE sh.trip.id = :tripId 
           AND sh.seatNumber = :seatNumber 
           AND (sh.status = 'HOLD' AND sh.expiresAt > :now 
