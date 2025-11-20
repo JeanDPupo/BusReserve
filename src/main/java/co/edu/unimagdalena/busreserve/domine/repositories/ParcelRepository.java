@@ -8,9 +8,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface ParcelRepository extends JpaRepository<Baggage,Long> {
+public interface ParcelRepository extends JpaRepository<Parcel,Long> {
+    // Crear una encomienda
+    Parcel save(Parcel parcel);
+
+    // Buscar encomienda por código
     Optional<Parcel> findByCode(String code);
-    List<Parcel> findByFromStopIdAndStatus(Long fromStopId, ParcelStatus status);
-    List<Parcel> findByToStopIdAndStatusIn(Long toStopId, List<ParcelStatus> statuses);
-    List<Parcel> findByStatusAndTripId(ParcelStatus status, Long tripId);
+
+    // Buscar encomiendas por estado (IN_TRANSIT, DELIVERED, FAILED)
+    List<Parcel> findByStatus(String status);
 }

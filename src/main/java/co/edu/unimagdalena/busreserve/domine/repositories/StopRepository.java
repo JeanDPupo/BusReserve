@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface StopRepository extends JpaRepository<Stop,Long> {
-    List<Stop> findByRouteIdOrderByOrderAsc(Long routeId);
-    Optional<Stop> findByRouteIdAndOrder(Long routeId, Integer order);
+
+    List<Stop> findByRouteId(Long routeId);  // Obtener paradas por ruta
+
+    List<Stop> findByNameContainingIgnoreCase(String namePart);  // Buscar por nombre de la parada
 }

@@ -21,8 +21,14 @@ public class FareRule {
     @ManyToOne @JoinColumn(name = "route_id")
     private Route route;
 
-    private Long fromStopId;
-    private Long toStopId;
+    @ManyToOne
+    @JoinColumn(name = "fromStopId", nullable = false)
+    private Stop fromStop;
+
+    @ManyToOne
+    @JoinColumn(name = "toStopId", nullable = false)
+    private Stop toStop;
+
     private Double basePrice;
 
     @Column(columnDefinition = "jsonb")
