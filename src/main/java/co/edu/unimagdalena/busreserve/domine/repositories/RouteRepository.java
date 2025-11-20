@@ -11,11 +11,11 @@ public interface RouteRepository extends JpaRepository<Route, Long> {
     // Obtener todas las rutas
     List<Route> findAll();
 
-    Optional<Route> findRouteById(Long id);
+    Optional<Route> findById(Long id);
 
     // Obtener rutas por origen
-    List<Route> findByOriginId(Long originId);
+    List<Route> findByOrigin(String origin);
 
     // Obtener rutas por destino
-    List<Route> findByDestinationId(Long destinationId);
+    List<Route> findByDestination(String destination);
 }

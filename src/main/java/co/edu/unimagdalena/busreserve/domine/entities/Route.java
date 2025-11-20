@@ -22,13 +22,9 @@ public class Route {
 
     private String code;
     private String name;
-    @ManyToOne
-    @JoinColumn(name = "origin_id", nullable = false)
-    private Stop origin;  // Relación con Stop como origen
 
-    @ManyToOne
-    @JoinColumn(name = "destination_id", nullable = false)
-    private Stop destination;  // Relación con Stop como destino
+    private String origin;
+    private String destination;
 
     private Double distanceKm;
     private Integer durationMin;

@@ -28,13 +28,13 @@ public class Ticket {
     @JoinColumn(name = "passenger_id")
     private User passenger;
 
-    private String seatNumber;
+    private Integer seatNumber;
     @ManyToOne
-    @JoinColumn(name = "fromStopId", nullable = false)
+    @JoinColumn(name = "from_stop_id")
     private Stop fromStop;
 
     @ManyToOne
-    @JoinColumn(name = "toStopId", nullable = false)
+    @JoinColumn(name = "to_stop_id")
     private Stop toStop;
 
     private BigDecimal price;

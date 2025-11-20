@@ -21,7 +21,7 @@ public class Seat {
     @JoinColumn(name = "bus_id")
     private Bus bus;
 
-    private String number;
+    private Integer number;
 
     @Enumerated(EnumType.STRING)
     private SeatType type;

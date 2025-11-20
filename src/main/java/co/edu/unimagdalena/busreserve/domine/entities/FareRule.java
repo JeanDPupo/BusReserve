@@ -1,10 +1,14 @@
 package co.edu.unimagdalena.busreserve.domine.entities;
 
+import com.vladmihalcea.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
+
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "fareRules")
@@ -22,15 +26,17 @@ public class FareRule {
     private Route route;
 
     @ManyToOne
-    @JoinColumn(name = "fromStopId", nullable = false)
+    @JoinColumn(name = "fromStop_id")
     private Stop fromStop;
 
+
     @ManyToOne
-    @JoinColumn(name = "toStopId", nullable = false)
+    @JoinColumn(name = "toStop_id")
     private Stop toStop;
 
-    private Double basePrice;
+    private BigDecimal basePrice;
 
+    @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
     private String discounts;
 

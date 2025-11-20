@@ -27,37 +27,35 @@ public class Stop {
     @JoinColumn(name = "route_id", nullable = false)
     private Route route;
 
-    @OneToMany(mappedBy = "origin")
-    private List<Route> origins = new ArrayList<>();
-
-    @OneToMany(mappedBy = "destination")
-    private List<Route> destinations = new ArrayList<>();
 
     private String name;
     private Integer stopOrder;
     private Double lat;
     private Double lng;
 
-    // Relación OneToMany para FareRule como origen (fromStop)
-    @OneToMany(mappedBy = "fromStop")
-    private Set<FareRule> fromFareRules;
-
-    // Relación OneToMany para FareRule como destino (toStop)
-    @OneToMany(mappedBy = "toStop")
-    private Set<FareRule> toFareRules;
-
-    // Relación OneToMany para Parcel como lugar de origen (fromStop)
-    @OneToMany(mappedBy = "fromStop")
-    private Set<Parcel> parcelsFrom;
-
-    // Relación OneToMany para Parcel como lugar de destino (toStop)
-    @OneToMany(mappedBy = "toStop")
-    private Set<Parcel> parcelsTo;
-
+    // Tickets cuyo trayecto INICIA en esta parada
     @OneToMany(mappedBy = "fromStop")
     private Set<Ticket> ticketsFrom;
 
-    // Relación OneToMany para Parcel como lugar de destino (toStop)
+    // Tickets cuyo trayecto TERMINA en esta parada
     @OneToMany(mappedBy = "toStop")
     private Set<Ticket> ticketsTo;
+
+    // Encomiendas enviadas desde esta parada
+    @OneToMany(mappedBy = "fromStop")
+    private Set<Parcel> parcelsFrom;
+
+    // Encomiendas destinadas a esta parada
+    @OneToMany(mappedBy = "toStop")
+    private Set<Parcel> parcelsTo;
+
+    // Tarifas aplicables DESDE esta parada
+    @OneToMany(mappedBy = "fromStop")
+    private Set<FareRule> fareRulesFrom;
+
+    // Tarifas aplicables HASTA esta parada
+    @OneToMany(mappedBy = "toStop")
+    private Set<FareRule> fareRulesTo;
+
+
 }

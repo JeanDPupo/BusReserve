@@ -24,7 +24,7 @@ public class SeatHold {
     @JoinColumn(name = "trip_id")
     private Trip trip;
 
-    private String seatNumber;
+    private Integer seatNumber;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -32,5 +32,6 @@ public class SeatHold {
 
     private LocalDateTime expiresAt;
 
+    @Enumerated(EnumType.STRING)
     private HoldStatus status;
 }

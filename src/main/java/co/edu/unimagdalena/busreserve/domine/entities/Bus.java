@@ -1,10 +1,13 @@
 package co.edu.unimagdalena.busreserve.domine.entities;
 
+import com.vladmihalcea.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
+
 
 import java.util.List;
 
@@ -23,8 +26,9 @@ public class Bus {
     private Integer capacity;
     private Boolean available = true;
 
+    @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
-    private String amenities;
+    private List<String> amenities;
 
     @OneToMany(mappedBy = "bus")
     private List<Trip> trips;

@@ -8,13 +8,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface ParcelRepository extends JpaRepository<Parcel,Long> {
-    // Crear una encomienda
-    Parcel save(Parcel parcel);
+public interface ParcelRepository extends JpaRepository<Parcel, Long> {
 
-    // Buscar encomienda por código
     Optional<Parcel> findByCode(String code);
 
-    // Buscar encomiendas por estado (IN_TRANSIT, DELIVERED, FAILED)
-    List<Parcel> findByStatus(String status);
+    List<Parcel> findByStatus(ParcelStatus status);
+
+    List<Parcel> findByFromStopIdAndToStopId(Long fromStopId, Long toStopId);
 }

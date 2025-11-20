@@ -27,11 +27,11 @@ public class Parcel {
     private String receiverPhone;
 
     @ManyToOne
-    @JoinColumn(name = "fromStopId", nullable = false)
-    private Stop fromStop;
+    @JoinColumn(name = "from_stop_id")
+    private Stop  fromStop;
 
     @ManyToOne
-    @JoinColumn(name = "toStopId", nullable = false)
+    @JoinColumn(name = "to_stop_id")
     private Stop toStop;
 
     private BigDecimal price;
