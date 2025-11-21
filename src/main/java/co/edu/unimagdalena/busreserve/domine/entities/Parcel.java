@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -25,15 +26,18 @@ public class Parcel {
     private String receiverName;
     private String receiverPhone;
 
-    private Long fromStopId;
-    private Long toStopId;
-    private Double price;
+    @ManyToOne
+    @JoinColumn(name = "from_stop_id")
+    private Stop  fromStop;
 
+    @ManyToOne
+    @JoinColumn(name = "to_stop_id")
+    private Stop toStop;
+
+    private BigDecimal price;
     @Enumerated(EnumType.STRING)
-    private ParcelStatus status;
+    private ParcelStatus status;  // Enum con los valores: CREATED, IN_TRANSIT, DELIVERED, FAILED
 
     private String proofPhotoUrl;
     private String deliveryOtp;
-
-    private LocalDateTime createdAt;
 }

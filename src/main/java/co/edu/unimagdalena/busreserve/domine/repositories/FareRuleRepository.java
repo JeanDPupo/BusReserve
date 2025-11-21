@@ -14,8 +14,8 @@ public interface FareRuleRepository extends JpaRepository<FareRule,Long> {
     @Query("""
         SELECT fr FROM FareRule fr 
         WHERE fr.route.id = :routeId 
-          AND fr.fromStopId = :fromStopId 
-          AND fr.toStopId = :toStopId
+          AND fr.fromStop.id = :fromStopId 
+          AND fr.toStop.id = :toStopId
         """)
     Optional<FareRule> findByRouteAndStops(
             @Param("routeId") Long routeId,

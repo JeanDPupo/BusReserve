@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SeatRepository extends JpaRepository<Seat,Long> {
+    // Obtener todas las sillas de un bus
     List<Seat> findByBusId(Long busId);
-    Optional<Seat> findByBusIdAndNumber(Long busId, String number);
+
+    // Buscar una silla específica en un bus
+    Optional<Seat> findByBusIdAndNumber(Long busId, Integer seatNumber);
 }

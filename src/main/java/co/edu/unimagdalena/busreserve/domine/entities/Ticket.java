@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "tickets")
 @Data
@@ -26,10 +28,16 @@ public class Ticket {
     @JoinColumn(name = "passenger_id")
     private User passenger;
 
-    private String seatNumber;
-    private Long fromStopId;
-    private Long toStopId;
-    private Double price;
+    private Integer seatNumber;
+    @ManyToOne
+    @JoinColumn(name = "from_stop_id")
+    private Stop fromStop;
+
+    @ManyToOne
+    @JoinColumn(name = "to_stop_id")
+    private Stop toStop;
+
+    private BigDecimal price;
 
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;

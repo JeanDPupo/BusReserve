@@ -22,8 +22,10 @@ public class Route {
 
     private String code;
     private String name;
+
     private String origin;
     private String destination;
+
     private Double distanceKm;
     private Integer durationMin;
 

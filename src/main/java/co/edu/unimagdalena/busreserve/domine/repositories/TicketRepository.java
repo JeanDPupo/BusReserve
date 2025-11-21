@@ -2,34 +2,52 @@ package co.edu.unimagdalena.busreserve.domine.repositories;
 
 import co.edu.unimagdalena.busreserve.domine.entities.Ticket;
 import co.edu.unimagdalena.busreserve.domine.entities.TicketStatus;
+import co.edu.unimagdalena.busreserve.domine.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface TicketRepository extends JpaRepository<Ticket,Long> {
-    List<Ticket> findByTripId(Long tripId);
+
+    // ==============================================
+    // 1. Tickets del pasajero (requerido)
+    // ==============================================
+    List<Ticket> findByPassenger(User passenger);
+
     List<Ticket> findByPassengerId(Long passengerId);
-    List<Ticket> findByTripIdAndStatusIn(Long tripId, List<TicketStatus> statuses);
+
+
+
+    // ==============================================
+    // 2. Tickets por viaje (Trip)
+    //    Para panel del despachador, KPIs, no-show
+    // ==============================================
+    List<Ticket> findByTripId(Long tripId);
+
+
+    List<Ticket> findByStatus(TicketStatus status);
+
+
+    List<Ticket> findByTripIdAndFromStopIdAndToStopId(
+            Long tripId,
+            Long fromStopId,
+            Long toStopId
+    );
+
 
     @Query("""
-        SELECT t FROM Ticket t 
-        WHERE t.trip.id = :tripId 
-          AND t.seatNumber = :seatNumber 
-          AND t.fromStopId <= :toStopId 
-          AND t.toStopId >= :fromStopId
+        SELECT t FROM Ticket t
+        WHERE t.trip.id = :tripId
+          AND t.fromStop.stopOrder < :toOrder
+          AND t.toStop.stopOrder   > :fromOrder
         """)
     List<Ticket> findOverlappingTickets(
             @Param("tripId") Long tripId,
-            @Param("seatNumber") String seatNumber,
-            @Param("fromStopId") Long fromStopId,
-            @Param("toStopId") Long toStopId
+            @Param("fromOrder") Integer fromOrder,
+            @Param("toOrder") Integer toOrder
     );
-
-    @Query("SELECT COUNT(t) FROM Ticket t WHERE t.trip.id = :tripId AND t.status = 'SOLD'")
-    long countSoldSeats(@Param("tripId") Long tripId);
-
-    List<Ticket> findByStatusAndTrip_DepartureAtBefore(TicketStatus status, LocalDateTime threshold);
 }

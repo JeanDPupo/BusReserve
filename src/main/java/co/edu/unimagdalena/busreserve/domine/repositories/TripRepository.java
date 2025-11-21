@@ -6,11 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TripRepository extends JpaRepository<Trip,Long> {
-    List<Trip> findByRouteIdAndDateAndStatusIn(Long routeId, LocalDateTime date, List<TripStatus> statuses);
+    List<Trip> findByRouteIdAndDateAndStatusIn(Long routeId, LocalDate date, List<TripStatus> statuses);
 
     @Query("""
         SELECT t FROM Trip t 
@@ -23,7 +24,7 @@ public interface TripRepository extends JpaRepository<Trip,Long> {
     List<Trip> findAvailableTrips(
             @Param("origin") String origin,
             @Param("destination") String destination,
-            @Param("date") LocalDateTime date,
+            @Param("date") LocalDate date,
             @Param("statuses") List<TripStatus> statuses
     );
 
