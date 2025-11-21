@@ -17,8 +17,8 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class ReportServiceImpl implements ReportService {
-
+public abstract class ReportServiceImpl implements ReportService {
+/*
     private final TripRepository tripRepo;
     private final TicketRepository ticketRepo;
     private final ParcelRepository parcelRepo;
@@ -149,4 +149,5 @@ public class ReportServiceImpl implements ReportService {
 
         return report;
     }
-}
+    */
+    }

@@ -76,6 +76,7 @@ public class SeatServiceImpl implements SeatService {
         List<Seat> seats = new ArrayList<>();
         int preferencialSeats = Math.min(4, totalSeats / 10);
 
+        /**
         for (int i = 1; i <= totalSeats; i++) {
             String seatNumber = String.format("A%02d", i);
             SeatType type = i <= preferencialSeats ? SeatType.PREFERENTIAL : SeatType.STANDARD;
@@ -83,6 +84,18 @@ public class SeatServiceImpl implements SeatService {
             Seat seat = Seat.builder()
                     .bus(bus)
                     .number(seatNumber)
+                    .type(type)
+                    .build();
+            seats.add(seat);
+        }
+        **/
+
+        for (int i = 1; i <= totalSeats; i++) {
+            SeatType type = i <= preferencialSeats ? SeatType.PREFERENTIAL : SeatType.STANDARD;
+
+            Seat seat = Seat.builder()
+                    .bus(bus)
+                    .number(i)
                     .type(type)
                     .build();
             seats.add(seat);

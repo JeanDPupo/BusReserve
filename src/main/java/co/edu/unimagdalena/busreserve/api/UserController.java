@@ -1,6 +1,6 @@
 package co.edu.unimagdalena.busreserve.api;
 
-import co.edu.unimagdalena.busreserve.api.dto.UserDtos.;
+import co.edu.unimagdalena.busreserve.api.dto.UserDtos.*;
 import co.edu.unimagdalena.busreserve.domine.entities.Role;
 import co.edu.unimagdalena.busreserve.services.interfaces.UserService;
 import jakarta.validation.Valid;
@@ -10,7 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import java.util.List;
 
