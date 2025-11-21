@@ -4,15 +4,18 @@ import co.edu.unimagdalena.busreserve.domine.entities.EntityType;
 import co.edu.unimagdalena.busreserve.domine.entities.IncidentType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public class IncidentDtos {
+
     public record IncidentCreateRequest(
             @NotNull EntityType entityType,
             @NotNull Long entityId,
             @NotNull IncidentType type,
-            @NotBlank String note
+            @NotBlank @Size(min=5) String note
     ) implements Serializable {}
 
     public record IncidentResponse(

@@ -40,4 +40,5 @@ public class Parcel {
 
     private String proofPhotoUrl;
     private String deliveryOtp;
+    private LocalDateTime createdAt;
 }

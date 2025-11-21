@@ -6,14 +6,14 @@ import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface BusMapper {
-    
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "available", constant = "true")
     @Mapping(target = "trips", ignore = true)
     Bus toEntity(BusCreateRequest req);
-    
+
     BusResponse toResponse(Bus entity);
-    
+
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "plate", ignore = true)

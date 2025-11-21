@@ -5,17 +5,18 @@ import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 
 public class StopDtos {
+
     public record StopCreateRequest(
             @NotNull Long routeId,
             @NotBlank String name,
-            @NotNull Integer order,
+            @NotNull Integer stopOrder,
             Double lat,
             Double lng
     ) implements Serializable {}
 
     public record StopUpdateRequest(
             String name,
-            Integer order,
+            Integer stopOrder,
             Double lat,
             Double lng
     ) implements Serializable {}
@@ -24,7 +25,7 @@ public class StopDtos {
             Long id,
             Long routeId,
             String name,
-            Integer order,
+            Integer stopOrder,
             Double lat,
             Double lng
     ) implements Serializable {}

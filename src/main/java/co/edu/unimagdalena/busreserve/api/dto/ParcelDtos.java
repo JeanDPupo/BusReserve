@@ -4,17 +4,19 @@ import co.edu.unimagdalena.busreserve.domine.entities.ParcelStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class ParcelDtos {
+
     public record ParcelCreateRequest(
             @NotBlank String senderName,
             @NotBlank String senderPhone,
             @NotBlank String receiverName,
             @NotBlank String receiverPhone,
             @NotNull Long fromStopId,
-            @NotNull Long toStopId,
-            @NotNull Double price
+            @NotNull Long toStopId
+            // price and code removed (calculated/generated server-side)
     ) implements Serializable {}
 
     public record ParcelUpdateRequest(
@@ -31,7 +33,7 @@ public class ParcelDtos {
             String receiverPhone,
             Long fromStopId,
             Long toStopId,
-            Double price,
+            BigDecimal price,
             ParcelStatus status,
             String proofPhotoUrl,
             String deliveryOtp,

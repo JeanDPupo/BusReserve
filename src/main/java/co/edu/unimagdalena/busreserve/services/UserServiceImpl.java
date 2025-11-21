@@ -30,9 +30,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse create(UserCreateRequest req) {
-        if (userRepo.findByEmail(req.email()).isPresent()) {
-            throw new IllegalStateException("Email already exists");
-        }
+        boolean emailTaken = userRepo.findByEmail(req.email()).isPresent();
+        if (emailTaken)
+            throw new IllegalStateException("Email already registered");
+
+        boolean phoneTaken = userRepo.findByPhone(req.phone()).isPresent();
+        if (phoneTaken)
+            throw new NotFoundException("Phone already registered");
 
         User user = mapper.toEntity(req);
         user.setPasswordHash(passwordEncoder.encode(req.password()));
@@ -45,7 +49,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse get(Long id) {
         return userRepo.findById(id)
                 .map(mapper::toResponse)
-                .orElseThrow(() -> new NotFoundException("User %d not found".formatted(id)));
+                .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
     @Override
@@ -53,7 +57,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse getByEmail(String email) {
         return userRepo.findByEmail(email)
                 .map(mapper::toResponse)
-                .orElseThrow(() -> new NotFoundException("User with email %s not found".formatted(email)));
+                .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
     @Override
@@ -66,8 +70,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public List<UserResponse> findByRole(Role role) {
-        return userRepo.findByRole(role)
+        return userRepo.findAll()
                 .stream()
+                .filter(u -> u.getRole() == role)
                 .map(mapper::toResponse)
                 .toList();
     }
@@ -75,7 +80,23 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse update(Long id, UserUpdateRequest req) {
         User user = userRepo.findById(id)
-                .orElseThrow(() -> new NotFoundException("User %d not found".formatted(id)));
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        boolean emailTaken = req.email() != null &&
+                userRepo.findByEmail(req.email())
+                        .filter(u -> !u.getId().equals(id))
+                        .isPresent();
+
+        if (emailTaken)
+            throw new NotFoundException("Email already registered");
+
+        boolean phoneTaken = req.phone() != null &&
+                userRepo.findByPhone(req.phone())
+                        .filter(u -> !u.getId().equals(id))
+                        .isPresent();
+
+        if (phoneTaken)
+            throw new NotFoundException("Phone already registered");
 
         mapper.patch(user, req);
 
@@ -84,36 +105,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(Long id) {
-        if (!userRepo.existsById(id)) {
-            throw new NotFoundException("User %d not found".formatted(id));
-        }
-        userRepo.deleteById(id);
+        User user = userRepo.findById(id)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        userRepo.delete(user);
     }
 
     @Override
     public void changePassword(Long id, String newPassword) {
         User user = userRepo.findById(id)
-                .orElseThrow(() -> new NotFoundException("User %d not found".formatted(id)));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         user.setPasswordHash(passwordEncoder.encode(newPassword));
         userRepo.save(user);
     }
 }
-
-// ==================== SeatServiceImpl.java ====================
-
-// ==================== FareRuleServiceImpl.java ====================
-
-// ==================== SeatHoldServiceImpl.java ====================
-
-// ==================== BaggageServiceImpl.java ====================
-
-// ==================== ParcelServiceImpl.java ====================
-
-// ==================== AssignmentServiceImpl.java ====================
-
-// ==================== IncidentServiceImpl.java ====================
-
-// ==================== ConfigServiceImpl.java ====================
-
-// ==================== ReportServiceImpl.java ====================

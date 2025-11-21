@@ -29,7 +29,6 @@ public class Route {
     private Double distanceKm;
     private Integer durationMin;
 
-    @Builder.Default
     @OneToMany(mappedBy = "route")
     private List<Stop> stops = new ArrayList<>();
 }

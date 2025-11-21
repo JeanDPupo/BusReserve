@@ -22,7 +22,7 @@ public class ReportServiceImpl implements ReportService {
     private final TripRepository tripRepo;
     private final TicketRepository ticketRepo;
     private final ParcelRepository parcelRepo;
-    private final AssigmentRepository assignmentRepo;
+    private final AssignmentRepository assignmentRepo;
 
     @Override
     public Map<String, Object> getOccupancyReport(Long tripId) {
@@ -48,7 +48,7 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public Map<String, Object> getSalesReport(LocalDateTime from, LocalDateTime to) {
-        var tickets = ticketRepo.findByStatusAndTrip_DepartureAtBefore(TicketStatus.SOLD, to)
+        var tickets = ticketRepo.findByStatusAndTrip_DepartureAtBefore((TicketStatus.SOLD, to)
                 .stream()
                 .filter(t -> t.getTrip().getDepartureAt().isAfter(from))
                 .toList();

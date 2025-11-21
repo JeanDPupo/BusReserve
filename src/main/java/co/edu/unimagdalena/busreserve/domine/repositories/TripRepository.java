@@ -8,9 +8,11 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 
 public interface TripRepository extends JpaRepository<Trip,Long> {
+
     List<Trip> findByRouteIdAndDateAndStatusIn(Long routeId, LocalDate date, List<TripStatus> statuses);
 
     @Query("""
@@ -29,4 +31,8 @@ public interface TripRepository extends JpaRepository<Trip,Long> {
     );
 
     List<Trip> findByStatusAndDepartureAtBefore(TripStatus status, LocalDateTime threshold);
+
+    boolean existsByBusIdAndDepartureAt(Long busId, LocalDateTime departureAt);
+
+    List<Trip> findByStatus(TripStatus status);
 }

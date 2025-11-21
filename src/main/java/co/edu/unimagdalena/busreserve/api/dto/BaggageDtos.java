@@ -1,12 +1,16 @@
 package co.edu.unimagdalena.busreserve.api.dto;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
 import java.io.Serializable;
 
 public class BaggageDtos {
+
     public record BaggageCreateRequest(
-            @NotNull Double weightKg,
-            Double fee,
+            @NotNull Long ticketId,
+            @NotNull @Positive Double weightKg,
+            // fee removed because it should be calculated server-side (recommended)
             String tagCode
     ) implements Serializable {}
 

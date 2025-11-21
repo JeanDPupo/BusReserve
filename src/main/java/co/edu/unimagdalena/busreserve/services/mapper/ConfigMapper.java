@@ -1,17 +1,19 @@
 package co.edu.unimagdalena.busreserve.services.mapper;
 
-import co.edu.unimagdalena.busreserve.api.dto.IncidentDtos.*;
-import co.edu.unimagdalena.busreserve.domine.entities.Incident;
+import co.edu.unimagdalena.busreserve.api.dto.ConfigDtos.*;
+import co.edu.unimagdalena.busreserve.domine.entities.Config;
 import org.mapstruct.*;
 
-import java.time.LocalDateTime;
-
 @Mapper(componentModel = "spring")
-public interface IncidentMapper {
-    
+public interface ConfigMapper {
+
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
-    Incident toEntity(IncidentCreateRequest req);
-    
-    IncidentResponse toResponse(Incident entity);
+    Config toEntity(ConfigCreateRequest req);
+
+    ConfigResponse toResponse(Config config);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "keyName", ignore = true)
+    void patch(@MappingTarget Config target, ConfigUpdateRequest changes);
 }

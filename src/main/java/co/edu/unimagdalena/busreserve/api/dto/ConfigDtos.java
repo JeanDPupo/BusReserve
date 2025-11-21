@@ -1,30 +1,23 @@
 package co.edu.unimagdalena.busreserve.api.dto;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
-public class AssignmentDtos {
+public class ConfigDtos {
 
-    public record AssignmentCreateRequest(
-            @NotNull Long tripId,
-            @NotNull Long driverId,
-            @NotNull Long dispatcherId,
-            Boolean checklistOk
-    ) implements  Serializable {}
+    public record ConfigCreateRequest(
+            @NotBlank String keyName,
+            @NotBlank String value
+    ) implements Serializable {}
 
-    public record AssignmentUpdateRequest(
-            Boolean checklistOk
-    ) implements  Serializable {}
+    public record ConfigUpdateRequest(
+            @NotBlank String value
+    ) implements Serializable {}
 
-    public record AssignmentResponse(
+    public record ConfigResponse(
             Long id,
-            Long tripId,
-            Long driverId,
-            String driverName,
-            Long dispatcherId,
-            String dispatcherName,
-            Boolean checklistOk,
-            LocalDateTime assignedAt
-    ) implements  Serializable {}
+            String keyName,
+            String value
+    ) implements Serializable {}
 }

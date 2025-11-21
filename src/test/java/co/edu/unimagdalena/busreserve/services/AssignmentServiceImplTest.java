@@ -5,7 +5,6 @@ import co.edu.unimagdalena.busreserve.domine.entities.Assignment;
 import co.edu.unimagdalena.busreserve.domine.entities.Role;
 import co.edu.unimagdalena.busreserve.domine.entities.Trip;
 import co.edu.unimagdalena.busreserve.domine.entities.User;
-import co.edu.unimagdalena.busreserve.domine.repositories.AssigmentRepository;
 import co.edu.unimagdalena.busreserve.domine.repositories.TripRepository;
 import co.edu.unimagdalena.busreserve.domine.repositories.UserRepository;
 import co.edu.unimagdalena.busreserve.exception.NotFoundException;

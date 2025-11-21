@@ -8,11 +8,11 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public class UserDtos {
+
     public record UserCreateRequest(
             @NotBlank String name,
             @Email @NotBlank String email,
             @NotBlank String phone,
-            @NotNull Role role,
             @NotBlank String password
     ) implements Serializable {}
 

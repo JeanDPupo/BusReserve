@@ -24,8 +24,6 @@ public class Bus {
 
     private String plate;
     private Integer capacity;
-
-    @Builder.Default
     private Boolean available = true;
 
     @Type(JsonType.class)

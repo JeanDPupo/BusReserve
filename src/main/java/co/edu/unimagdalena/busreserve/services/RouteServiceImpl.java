@@ -24,6 +24,12 @@ public class RouteServiceImpl implements RouteService {
 
     @Override
     public RouteResponse create(RouteCreateRequest req) {
+
+        boolean exists = routeRepo.findAll().stream()
+                .anyMatch(r -> r.getCode().equals(req.code()));
+        if (exists)
+            throw new NotFoundException("Route code already exists");
+
         Route route = mapper.toEntity(req);
         return mapper.toResponse(routeRepo.save(route));
     }
@@ -33,7 +39,7 @@ public class RouteServiceImpl implements RouteService {
     public RouteResponse get(Long id) {
         return routeRepo.findById(id)
                 .map(mapper::toResponse)
-                .orElseThrow(() -> new NotFoundException("Route %d not found".formatted(id)));
+                .orElseThrow(() -> new NotFoundException("Route not found"));
     }
 
     @Override
@@ -46,8 +52,9 @@ public class RouteServiceImpl implements RouteService {
     @Override
     @Transactional(readOnly = true)
     public List<RouteResponse> findByOriginAndDestination(String origin, String destination) {
-        return routeRepo.findByOriginAndDestination(origin, destination)
-                .stream()
+        List<Route> originList = routeRepo.findByOrigin(origin);
+        return originList.stream()
+                .filter(r -> r.getDestination().equals(destination))
                 .map(mapper::toResponse)
                 .toList();
     }
@@ -55,7 +62,7 @@ public class RouteServiceImpl implements RouteService {
     @Override
     public RouteResponse update(Long id, RouteUpdateRequest req) {
         Route route = routeRepo.findById(id)
-                .orElseThrow(() -> new NotFoundException("Route %d not found".formatted(id)));
+                .orElseThrow(() -> new NotFoundException("Route not found"));
 
         mapper.patch(route, req);
 
@@ -64,17 +71,9 @@ public class RouteServiceImpl implements RouteService {
 
     @Override
     public void delete(Long id) {
-        if (!routeRepo.existsById(id)) {
-            throw new NotFoundException("Route %d not found".formatted(id));
-        }
-        routeRepo.deleteById(id);
+        Route route = routeRepo.findById(id)
+                .orElseThrow(() -> new NotFoundException("Route not found"));
+
+        routeRepo.delete(route);
     }
 }
-
-// ==================== StopServiceImpl.java ====================
-
-// ==================== BusServiceImpl.java ====================
-
-// ==================== TripServiceImpl.java ====================
-
-// ==================== TicketServiceImpl.java ====================

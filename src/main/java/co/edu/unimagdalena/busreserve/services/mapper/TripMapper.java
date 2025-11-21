@@ -6,20 +6,23 @@ import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface TripMapper {
-    
+
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "route", ignore = true)
-    @Mapping(target = "bus", ignore = true)
+    @Mapping(target = "route.id", source = "routeId")
+    @Mapping(target = "bus.id", source = "busId")
     @Mapping(target = "tickets", ignore = true)
     @Mapping(target = "status", constant = "SCHEDULED")
     Trip toEntity(TripCreateRequest req);
-    
+
     @Mapping(target = "routeId", source = "route.id")
     @Mapping(target = "routeCode", source = "route.code")
+    @Mapping(target = "origin", source = "route.origin")
+    @Mapping(target = "destination", source = "route.destination")
     @Mapping(target = "busId", source = "bus.id")
     @Mapping(target = "busPlate", source = "bus.plate")
     TripResponse toResponse(Trip entity);
-    
+
+
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "route", ignore = true)

@@ -4,7 +4,6 @@ import co.edu.unimagdalena.busreserve.domine.entities.HoldStatus;
 import co.edu.unimagdalena.busreserve.domine.entities.SeatHold;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -51,5 +50,4 @@ public interface SeatHoldRepository extends JpaRepository<SeatHold,Long> {
     //    Útil para bloquear múltiples asientos en la compra
     // ============================================================
     List<SeatHold> findByUserIdAndTripIdAndStatus(Long userId, Long tripId, HoldStatus status);
-
 }

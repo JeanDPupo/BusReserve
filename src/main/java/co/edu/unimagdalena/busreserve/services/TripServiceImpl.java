@@ -11,13 +11,13 @@ import co.edu.unimagdalena.busreserve.domine.repositories.TripRepository;
 import co.edu.unimagdalena.busreserve.exception.NotFoundException;
 import co.edu.unimagdalena.busreserve.services.interfaces.TripService;
 import co.edu.unimagdalena.busreserve.services.mapper.TripMapper;
-import co.edu.unimagdalena.busreserve.services.interfaces.TripService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -33,6 +33,7 @@ public class TripServiceImpl implements TripService {
 
     @Override
     public TripResponse create(TripCreateRequest req) {
+
         Route route = routeRepo.findById(req.routeId())
                 .orElseThrow(() -> new NotFoundException("Route %d not found".formatted(req.routeId())));
 
@@ -41,6 +42,19 @@ public class TripServiceImpl implements TripService {
 
         if (!bus.getAvailable()) {
             throw new IllegalStateException("Bus %s is not available".formatted(bus.getPlate()));
+        }
+
+        if (!req.departureAt().toLocalDate().equals(req.date()) ||
+                !req.arrivalEta().toLocalDate().equals(req.date())) {
+            throw new IllegalStateException("Trip times must match the trip date");
+        }
+
+        if (!req.arrivalEta().isAfter(req.departureAt())) {
+            throw new IllegalStateException("Arrival must be after departure");
+        }
+
+        if (tripRepo.existsByBusIdAndDepartureAt(bus.getId(), req.departureAt())) {
+            throw new IllegalStateException("Bus already assigned to another trip at this time");
         }
 
         Trip trip = mapper.toEntity(req);
@@ -61,27 +75,26 @@ public class TripServiceImpl implements TripService {
     @Override
     @Transactional(readOnly = true)
     public Page<TripResponse> list(Pageable pageable) {
-        return tripRepo.findAll(pageable)
-                .map(mapper::toResponse);
+        return tripRepo.findAll(pageable).map(mapper::toResponse);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<TripResponse> findAvailableTrips(String origin, String destination, LocalDateTime date) {
-        List<TripStatus> availableStatuses = List.of(TripStatus.SCHEDULED, TripStatus.BOARDING);
-        return tripRepo.findAvailableTrips(origin, destination, date, availableStatuses)
-                .stream()
-                .map(mapper::toResponse)
-                .toList();
+    public List<TripResponse> findAvailableTrips(String origin, String destination, LocalDateTime dateTime) {
+        LocalDate day = dateTime.toLocalDate();
+        List<TripStatus> statuses = List.of(TripStatus.SCHEDULED, TripStatus.BOARDING);
+
+        return tripRepo.findAvailableTrips(
+                origin, destination,
+                day,
+                statuses
+        ).stream().map(mapper::toResponse).toList();
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<TripResponse> findByStatus(TripStatus status) {
-        return tripRepo.findByStatusAndDepartureAtBefore(status, LocalDateTime.now().plusYears(1))
-                .stream()
-                .map(mapper::toResponse)
-                .toList();
+        return tripRepo.findByStatus(status).stream().map(mapper::toResponse).toList();
     }
 
     @Override
@@ -90,6 +103,13 @@ public class TripServiceImpl implements TripService {
                 .orElseThrow(() -> new NotFoundException("Trip %d not found".formatted(id)));
 
         mapper.patch(trip, req);
+
+        // Validate times if changed
+        if (req.departureAt() != null || req.arrivalEta() != null) {
+            if (!trip.getArrivalEta().isAfter(trip.getDepartureAt())) {
+                throw new IllegalStateException("Arrival must be after departure");
+            }
+        }
 
         return mapper.toResponse(tripRepo.save(trip));
     }
@@ -100,10 +120,12 @@ public class TripServiceImpl implements TripService {
                 .orElseThrow(() -> new NotFoundException("Trip %d not found".formatted(id)));
 
         if (trip.getStatus() != TripStatus.SCHEDULED) {
-            throw new IllegalStateException("Cannot delete trip with status %s".formatted(trip.getStatus()));
+            throw new IllegalStateException(
+                    "Cannot delete trip with status %s".formatted(trip.getStatus())
+            );
         }
 
-        tripRepo.deleteById(id);
+        tripRepo.delete(trip);
     }
 
     @Override
@@ -121,7 +143,7 @@ public class TripServiceImpl implements TripService {
                 .orElseThrow(() -> new NotFoundException("Trip %d not found".formatted(id)));
 
         if (trip.getStatus() != TripStatus.SCHEDULED) {
-            throw new IllegalStateException("Can only open boarding for scheduled trips");
+            throw new IllegalStateException("Can only open boarding for SCHEDULED trips");
         }
 
         trip.setStatus(TripStatus.BOARDING);
@@ -134,7 +156,7 @@ public class TripServiceImpl implements TripService {
                 .orElseThrow(() -> new NotFoundException("Trip %d not found".formatted(id)));
 
         if (trip.getStatus() != TripStatus.BOARDING) {
-            throw new IllegalStateException("Trip is not in boarding status");
+            throw new IllegalStateException("Trip is not in BOARDING status");
         }
 
         trip.setStatus(TripStatus.SCHEDULED);
@@ -147,7 +169,7 @@ public class TripServiceImpl implements TripService {
                 .orElseThrow(() -> new NotFoundException("Trip %d not found".formatted(id)));
 
         if (trip.getStatus() != TripStatus.BOARDING) {
-            throw new IllegalStateException("Can only depart from boarding status");
+            throw new IllegalStateException("Can only depart from BOARDING status");
         }
 
         trip.setStatus(TripStatus.DEPARTED);

@@ -35,7 +35,7 @@ public class IncidentServiceImpl implements IncidentService {
     public IncidentResponse get(Long id) {
         return incidentRepo.findById(id)
                 .map(mapper::toResponse)
-                .orElseThrow(() -> new NotFoundException("Incident %d not found".formatted(id)));
+                .orElseThrow(() -> new NotFoundException("Incident not found"));
     }
 
     @Override
@@ -63,9 +63,9 @@ public class IncidentServiceImpl implements IncidentService {
 
     @Override
     public void delete(Long id) {
-        if (!incidentRepo.existsById(id)) {
-            throw new NotFoundException("Incident %d not found".formatted(id));
-        }
-        incidentRepo.deleteById(id);
+        Incident incident = incidentRepo.findById(id)
+                .orElseThrow(() -> new NotFoundException("Incident not found"));
+
+        incidentRepo.delete(incident);
     }
 }

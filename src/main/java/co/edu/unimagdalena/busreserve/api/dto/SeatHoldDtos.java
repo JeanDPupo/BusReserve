@@ -1,23 +1,24 @@
 package co.edu.unimagdalena.busreserve.api.dto;
 
 import co.edu.unimagdalena.busreserve.domine.entities.HoldStatus;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public class SeatHoldDtos {
+
     public record SeatHoldCreateRequest(
             @NotNull Long tripId,
-            @NotBlank String seatNumber,
-            @NotNull Long userId,
-            @NotNull LocalDateTime expiresAt
+            @NotNull @Min(1) Integer seatNumber,
+            @NotNull Long userId
+            // expiresAt REMOVED (server-controlled)
     ) implements Serializable {}
 
     public record SeatHoldResponse(
             Long id,
             Long tripId,
-            String seatNumber,
+            Integer seatNumber,
             Long userId,
             LocalDateTime expiresAt,
             HoldStatus status

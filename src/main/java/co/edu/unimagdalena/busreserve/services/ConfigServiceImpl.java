@@ -15,23 +15,23 @@ public class ConfigServiceImpl implements ConfigService {
 
     private final ConfigRepository configRepo;
 
-    private static final String HOLD_TIME_KEY = "hold_time_minutes";
-    private static final String OVERBOOKING_KEY = "overbooking_percentage";
-    private static final String NO_SHOW_FEE_KEY = "no_show_fee";
-
     @Override
     @Transactional(readOnly = true)
     public String getValue(String key) {
-        return configRepo.findByKey(key)
+        return configRepo.findByKeyName(key)
                 .map(Config::getValue)
                 .orElse(null);
     }
 
     @Override
     public void setValue(String key, String value) {
-        Config config = configRepo.findByKey(key)
-                .orElse(Config.builder().keyName(key).build());
-        
+        Config config = configRepo.findByKeyName(key)
+                .orElseGet(() -> {
+                    Config c = new Config();
+                    c.setKeyName(key);
+                    return c;
+                });
+
         config.setValue(value);
         configRepo.save(config);
     }
@@ -39,42 +39,36 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     @Transactional(readOnly = true)
     public Integer getHoldTimeMinutes() {
-        String value = getValue(HOLD_TIME_KEY);
-        return value != null ? Integer.parseInt(value) : 10;
+        String val = getValue("hold_time_minutes");
+        return val != null ? Integer.parseInt(val) : 10;
     }
 
     @Override
     @Transactional(readOnly = true)
     public Double getOverbookingPercentage() {
-        String value = getValue(OVERBOOKING_KEY);
-        return value != null ? Double.parseDouble(value) : 5.0;
+        String val = getValue("overbooking_percentage");
+        return val != null ? Double.parseDouble(val) : 0.0;
     }
 
     @Override
     @Transactional(readOnly = true)
     public Double getNoShowFee() {
-        String value = getValue(NO_SHOW_FEE_KEY);
-        return value != null ? Double.parseDouble(value) : 10000.0;
+        String val = getValue("no_show_fee");
+        return val != null ? Double.parseDouble(val) : 0.0;
     }
 
     @Override
     public void updateHoldTime(Integer minutes) {
-        setValue(HOLD_TIME_KEY, minutes.toString());
+        setValue("hold_time_minutes", minutes.toString());
     }
 
     @Override
     public void updateOverbookingPercentage(Double percentage) {
-        if (percentage < 0 || percentage > 20) {
-            throw new IllegalArgumentException("Overbooking percentage must be between 0 and 20");
-        }
-        setValue(OVERBOOKING_KEY, percentage.toString());
+        setValue("overbooking_percentage", percentage.toString());
     }
 
     @Override
     public void updateNoShowFee(Double fee) {
-        if (fee < 0) {
-            throw new IllegalArgumentException("No-show fee cannot be negative");
-        }
-        setValue(NO_SHOW_FEE_KEY, fee.toString());
+        setValue("no_show_fee", fee.toString());
     }
 }

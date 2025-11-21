@@ -2,20 +2,23 @@ package co.edu.unimagdalena.busreserve.api.dto;
 
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.List;
 
 public class FareRuleDtos {
+
     public record FareRuleCreateRequest(
-            @NotNull Long routeId,
-            @NotNull Long fromStopId,
-            @NotNull Long toStopId,
-            @NotNull Double basePrice,
-            String discounts,
+            Long routeId,
+            Long fromStopId,
+            Long toStopId,
+            BigDecimal basePrice,
+            List<String> discounts,
             Boolean dynamicPricing
     ) implements Serializable {}
 
     public record FareRuleUpdateRequest(
-            Double basePrice,
-            String discounts,
+            BigDecimal basePrice,
+            List<String> discounts,
             Boolean dynamicPricing
     ) implements Serializable {}
 
@@ -24,8 +27,8 @@ public class FareRuleDtos {
             Long routeId,
             Long fromStopId,
             Long toStopId,
-            Double basePrice,
-            String discounts,
+            BigDecimal basePrice,
+            List<String> discounts,
             Boolean dynamicPricing
     ) implements Serializable {}
 }

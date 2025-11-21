@@ -23,7 +23,7 @@ import java.util.List;
 @Transactional
 public class SeatHoldServiceImpl implements SeatHoldService {
 
-    private final SeatHoldRepository holdRepo;
+    private final SeatHoldRepository seatHoldRepo;
     private final TripRepository tripRepo;
     private final UserRepository userRepo;
     private final SeatHoldMapper mapper;
@@ -31,36 +31,37 @@ public class SeatHoldServiceImpl implements SeatHoldService {
     @Override
     public SeatHoldResponse holdSeat(SeatHoldCreateRequest req) {
         Trip trip = tripRepo.findById(req.tripId())
-                .orElseThrow(() -> new NotFoundException("Trip %d not found".formatted(req.tripId())));
+                .orElseThrow(() -> new NotFoundException("Trip not found"));
 
         User user = userRepo.findById(req.userId())
-                .orElseThrow(() -> new NotFoundException("User %d not found".formatted(req.userId())));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
-        if (!isSeatAvailable(req.tripId(), req.seatNumber())) {
-            throw new IllegalStateException("Seat %s is not available".formatted(req.seatNumber()));
-        }
+        boolean exists = seatHoldRepo.findByTripIdAndSeatNumber(
+                req.tripId(), req.seatNumber()
+        ).isPresent();
+
+        if (exists)
+            throw new NotFoundException("Seat already on hold");
 
         SeatHold hold = mapper.toEntity(req);
         hold.setTrip(trip);
         hold.setUser(user);
-        hold.setStatus(HoldStatus.HOLD);
-        hold.setExpiresAt(LocalDateTime.now().plusMinutes(10));  // WHAT HAPPEND!?
 
-        return mapper.toResponse(holdRepo.save(hold));
+        return mapper.toResponse(seatHoldRepo.save(hold));
     }
 
     @Override
     @Transactional(readOnly = true)
     public SeatHoldResponse get(Long id) {
-        return holdRepo.findById(id)
+        return seatHoldRepo.findById(id)
                 .map(mapper::toResponse)
-                .orElseThrow(() -> new NotFoundException("SeatHold %d not found".formatted(id)));
+                .orElseThrow(() -> new NotFoundException("SeatHold not found"));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<SeatHoldResponse> listByTrip(Long tripId) {
-        return holdRepo.findByTripIdAndSeatNumberAndStatus(tripId, null, HoldStatus.HOLD)
+        return seatHoldRepo.findByTripIdAndStatus(tripId, HoldStatus.HOLD)
                 .stream()
                 .map(mapper::toResponse)
                 .toList();
@@ -68,22 +69,31 @@ public class SeatHoldServiceImpl implements SeatHoldService {
 
     @Override
     public void releaseHold(Long id) {
-        SeatHold hold = holdRepo.findById(id)
-                .orElseThrow(() -> new NotFoundException("SeatHold %d not found".formatted(id)));
+        SeatHold hold = seatHoldRepo.findById(id)
+                .orElseThrow(() -> new NotFoundException("SeatHold not found"));
 
         hold.setStatus(HoldStatus.EXPIRED);
-        holdRepo.save(hold);
+        seatHoldRepo.save(hold);
     }
 
     @Override
     public void expireHolds() {
-        int expired = holdRepo.expireHolds(LocalDateTime.now());
+        List<SeatHold> expired = seatHoldRepo.findByStatusAndExpiresAtBefore(
+                HoldStatus.HOLD,
+                LocalDateTime.now()
+        );
+
+        expired.forEach(h -> h.setStatus(HoldStatus.EXPIRED));
+        seatHoldRepo.saveAll(expired);
     }
 
     @Override
     @Transactional(readOnly = true)
     public boolean isSeatAvailable(Long tripId, String seatNumber) {
-        return holdRepo.findActiveOrExpiredHold(tripId, seatNumber, LocalDateTime.now())
+        Integer num = Integer.parseInt(seatNumber);
+
+        return seatHoldRepo
+                .findByTripIdAndSeatNumber(tripId, num)
                 .isEmpty();
     }
 }

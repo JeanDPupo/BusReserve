@@ -4,7 +4,6 @@ import co.edu.unimagdalena.busreserve.api.dto.FareRuleDtos.*;
 import co.edu.unimagdalena.busreserve.domine.entities.FareRule;
 import co.edu.unimagdalena.busreserve.domine.entities.Route;
 import co.edu.unimagdalena.busreserve.domine.repositories.FareRuleRepository;
-import co.edu.unimagdalena.busreserve.domine.repositories.RouteRepository;
 import co.edu.unimagdalena.busreserve.exception.NotFoundException;
 import co.edu.unimagdalena.busreserve.services.mapper.FareRuleMapper;
 import org.junit.jupiter.api.Test;

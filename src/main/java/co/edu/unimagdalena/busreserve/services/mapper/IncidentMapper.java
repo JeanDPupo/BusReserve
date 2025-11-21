@@ -8,10 +8,10 @@ import java.time.LocalDateTime;
 
 @Mapper(componentModel = "spring")
 public interface IncidentMapper {
-    
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
     Incident toEntity(IncidentCreateRequest req);
-    
+
     IncidentResponse toResponse(Incident entity);
 }

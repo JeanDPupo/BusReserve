@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -26,7 +27,12 @@ public class StopServiceImpl implements StopService {
     @Override
     public StopResponse create(StopCreateRequest req) {
         Route route = routeRepo.findById(req.routeId())
-                .orElseThrow(() -> new NotFoundException("Route %d not found".formatted(req.routeId())));
+                .orElseThrow(() -> new NotFoundException("Route not found"));
+
+        boolean sameOrderExists = stopRepo.findByRouteId(req.routeId()).stream()
+                .anyMatch(s -> s.getStopOrder().equals(req.stopOrder()));
+        if (sameOrderExists)
+            throw new NotFoundException("Stop order already exists in route");
 
         Stop stop = mapper.toEntity(req);
         stop.setRoute(route);
@@ -39,17 +45,15 @@ public class StopServiceImpl implements StopService {
     public StopResponse get(Long id) {
         return stopRepo.findById(id)
                 .map(mapper::toResponse)
-                .orElseThrow(() -> new NotFoundException("Stop %d not found".formatted(id)));
+                .orElseThrow(() -> new NotFoundException("Stop not found"));
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<StopResponse> listByRoute(Long routeId) {
-        if (!routeRepo.existsById(routeId)) {
-            throw new NotFoundException("Route %d not found".formatted(routeId));
-        }
-        return stopRepo.findByRouteIdOrderByOrderAsc(routeId)
+        return stopRepo.findByRouteId(routeId)
                 .stream()
+                .sorted(Comparator.comparing(Stop::getStopOrder))
                 .map(mapper::toResponse)
                 .toList();
     }
@@ -57,7 +61,7 @@ public class StopServiceImpl implements StopService {
     @Override
     public StopResponse update(Long id, StopUpdateRequest req) {
         Stop stop = stopRepo.findById(id)
-                .orElseThrow(() -> new NotFoundException("Stop %d not found".formatted(id)));
+                .orElseThrow(() -> new NotFoundException("Stop not found"));
 
         mapper.patch(stop, req);
 
@@ -66,9 +70,9 @@ public class StopServiceImpl implements StopService {
 
     @Override
     public void delete(Long id) {
-        if (!stopRepo.existsById(id)) {
-            throw new NotFoundException("Stop %d not found".formatted(id));
-        }
-        stopRepo.deleteById(id);
+        Stop stop = stopRepo.findById(id)
+                .orElseThrow(() -> new NotFoundException("Stop not found"));
+
+        stopRepo.delete(stop);
     }
 }

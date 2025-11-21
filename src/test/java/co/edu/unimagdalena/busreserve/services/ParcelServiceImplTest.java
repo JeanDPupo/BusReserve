@@ -3,7 +3,6 @@ package co.edu.unimagdalena.busreserve.services;
 import co.edu.unimagdalena.busreserve.api.dto.ParcelDtos.*;
         import co.edu.unimagdalena.busreserve.domine.entities.Parcel;
 import co.edu.unimagdalena.busreserve.domine.entities.ParcelStatus;
-import co.edu.unimagdalena.busreserve.domine.repositories.ParcelRepository;
 import co.edu.unimagdalena.busreserve.services.mapper.ParcelMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

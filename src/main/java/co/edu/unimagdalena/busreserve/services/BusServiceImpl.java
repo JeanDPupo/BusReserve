@@ -23,11 +23,14 @@ import java.util.List;
 public class BusServiceImpl implements BusService {
 
     private final BusRepository busRepo;
-
     private final BusMapper mapper;
 
     @Override
     public BusResponse create(BusCreateRequest req) {
+        boolean exists = busRepo.findByPlate(req.plate()).isPresent();
+        if (exists)
+            throw new NotFoundException("Plate already registered");
+
         Bus bus = mapper.toEntity(req);
         return mapper.toResponse(busRepo.save(bus));
     }
@@ -37,7 +40,7 @@ public class BusServiceImpl implements BusService {
     public BusResponse get(Long id) {
         return busRepo.findById(id)
                 .map(mapper::toResponse)
-                .orElseThrow(() -> new NotFoundException("Bus %d not found".formatted(id)));
+                .orElseThrow(() -> new NotFoundException("Bus not found"));
     }
 
     @Override
@@ -45,7 +48,7 @@ public class BusServiceImpl implements BusService {
     public BusResponse getByPlate(String plate) {
         return busRepo.findByPlate(plate)
                 .map(mapper::toResponse)
-                .orElseThrow(() -> new NotFoundException("Bus with plate %s not found".formatted(plate)));
+                .orElseThrow(() -> new NotFoundException("Bus not found"));
     }
 
     @Override
@@ -67,7 +70,7 @@ public class BusServiceImpl implements BusService {
     @Override
     public BusResponse update(Long id, BusUpdateRequest req) {
         Bus bus = busRepo.findById(id)
-                .orElseThrow(() -> new NotFoundException("Bus %d not found".formatted(id)));
+                .orElseThrow(() -> new NotFoundException("Bus not found"));
 
         mapper.patch(bus, req);
 
@@ -76,17 +79,17 @@ public class BusServiceImpl implements BusService {
 
     @Override
     public void delete(Long id) {
-        if (!busRepo.existsById(id)) {
-            throw new NotFoundException("Bus %d not found".formatted(id));
-        }
-        busRepo.deleteById(id);
+        Bus bus = busRepo.findById(id)
+                .orElseThrow(() -> new NotFoundException("Bus not found"));
+
+        busRepo.delete(bus);
     }
 
     @Override
     public void setAvailability(Long id, boolean available) {
         Bus bus = busRepo.findById(id)
-                .orElseThrow(() -> new NotFoundException("Bus %d not found".formatted(id)));
-        
+                .orElseThrow(() -> new NotFoundException("Bus not found"));
+
         bus.setAvailable(available);
         busRepo.save(bus);
     }

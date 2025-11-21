@@ -6,11 +6,11 @@ import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface BaggageMapper {
-    
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "ticket", ignore = true)
     Baggage toEntity(BaggageCreateRequest req);
-    
+
     @Mapping(target = "ticketId", source = "ticket.id")
     BaggageResponse toResponse(Baggage entity);
 }

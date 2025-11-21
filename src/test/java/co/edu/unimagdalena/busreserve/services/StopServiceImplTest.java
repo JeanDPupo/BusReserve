@@ -3,7 +3,6 @@ package co.edu.unimagdalena.busreserve.services;
 import co.edu.unimagdalena.busreserve.api.dto.StopDtos.*;
 import co.edu.unimagdalena.busreserve.domine.entities.Route;
 import co.edu.unimagdalena.busreserve.domine.entities.Stop;
-import co.edu.unimagdalena.busreserve.domine.repositories.RouteRepository;
 import co.edu.unimagdalena.busreserve.domine.repositories.StopRepository;
 import co.edu.unimagdalena.busreserve.exception.NotFoundException;
 import co.edu.unimagdalena.busreserve.services.mapper.StopMapper;

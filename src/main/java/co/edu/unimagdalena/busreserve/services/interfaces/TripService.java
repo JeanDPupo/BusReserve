@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TripService {
+
     TripResponse create(TripCreateRequest req);
     TripResponse get(Long id);
     Page<TripResponse> list(Pageable pageable);
