@@ -1,5 +1,6 @@
 package co.edu.unimagdalena.busreserve.domine.repositories;
 
+import aj.org.objectweb.asm.commons.Remapper;
 import co.edu.unimagdalena.busreserve.domine.entities.Ticket;
 import co.edu.unimagdalena.busreserve.domine.entities.TicketStatus;
 import co.edu.unimagdalena.busreserve.domine.entities.User;
@@ -8,36 +9,25 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 public interface TicketRepository extends JpaRepository<Ticket,Long> {
 
-    // ==============================================
-    // 1. Tickets del pasajero (requerido)
-    // ==============================================
     List<Ticket> findByPassenger(User passenger);
 
     List<Ticket> findByPassengerId(Long passengerId);
 
-
-
-    // ==============================================
-    // 2. Tickets por viaje (Trip)
-    //    Para panel del despachador, KPIs, no-show
-    // ==============================================
     List<Ticket> findByTripId(Long tripId);
 
-
     List<Ticket> findByStatus(TicketStatus status);
-
 
     List<Ticket> findByTripIdAndFromStopIdAndToStopId(
             Long tripId,
             Long fromStopId,
             Long toStopId
     );
-
 
     @Query("""
         SELECT t FROM Ticket t
@@ -50,4 +40,12 @@ public interface TicketRepository extends JpaRepository<Ticket,Long> {
             @Param("fromOrder") Integer fromOrder,
             @Param("toOrder") Integer toOrder
     );
+
+    Optional<Ticket> findByTripIdAndSeatNumber(Long tripId, Integer seatNumber);
+
+    Optional<Ticket> findByQrCode(String qrCode);
+
+    Long countByTripIdAndStatus(Long tripId, TicketStatus status);
+
+    Collection<Object> findByStatusAndTrip_DepartureAtBefore(TicketStatus status, LocalDateTime tripDepartureAtBefore);
 }

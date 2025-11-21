@@ -57,5 +57,4 @@ public class Stop {
     @OneToMany(mappedBy = "toStop")
     private Set<FareRule> fareRulesTo;
 
-
 }

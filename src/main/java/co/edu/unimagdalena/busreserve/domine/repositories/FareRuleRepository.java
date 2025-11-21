@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FareRuleRepository extends JpaRepository<FareRule,Long> {
+
     List<FareRule> findByRouteId(Long routeId);
 
     @Query("""

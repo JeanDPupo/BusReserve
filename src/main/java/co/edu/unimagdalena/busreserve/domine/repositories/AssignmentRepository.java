@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface AssignmentRepository extends JpaRepository<Assignment,Long> {
+
     // ===============================================================
     // 1. Obtener asignaciones por viaje
     // ===============================================================

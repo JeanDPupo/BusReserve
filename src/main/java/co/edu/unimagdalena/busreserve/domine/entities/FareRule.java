@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "fareRules")
@@ -38,7 +39,7 @@ public class FareRule {
 
     @Type(JsonType.class)
     @Column(columnDefinition = "jsonb")
-    private String discounts;
+    private List<String> discounts;
 
     private Boolean dynamicPricing;
 }
